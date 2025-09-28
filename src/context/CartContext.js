@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { db } from '../db';
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 const PRODUCTS_KEY = 'telegram_products';
-const ORDERS_KEY = 'telegram_orders';
 
 function getProducts() {
     const products = localStorage.getItem(PRODUCTS_KEY);
@@ -28,26 +28,17 @@ function saveProducts(products) {
     localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
 }
 
-function getOrders() {
-    const orders = localStorage.getItem(ORDERS_KEY);
-    return orders ? JSON.parse(orders) : [];
-}
-
-function saveOrders(orders) {
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-}
-
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [products, setProducts] = useState(getProducts());
-  const [orders, setOrders] = useState(getOrders());
+  const [orders, setOrders] = useState(db.getOrders());
 
   useEffect(() => {
     saveProducts(products);
   }, [products]);
 
   useEffect(() => {
-    saveOrders(orders);
+    db.saveOrders(orders);
   }, [orders]);
 
   const addToCart = (product) => {
@@ -61,20 +52,25 @@ export const CartProvider = ({ children }) => {
   };
 
   const placeOrder = (user) => {
+    // Save user to DB
+    db.addUser(user);
+
     const newOrder = {
       id: Date.now().toString(),
+      userId: user.id,
       items: cart,
       total: cart.reduce((acc, item) => acc + item.price, 0),
       status: 'В обработке',
-      user: user,
       date: new Date().toISOString(),
     };
-    setOrders([...orders, newOrder]);
+    db.addOrder(newOrder);
+    setOrders(db.getOrders());
     setCart([]);
   };
 
   const updateOrderStatus = (orderId, status) => {
-    setOrders(orders.map(order => order.id === orderId ? {...order, status} : order));
+    db.updateOrder(orderId, { status });
+    setOrders(db.getOrders());
   };
 
   const addProduct = (product) => {
