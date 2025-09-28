@@ -2,6 +2,7 @@
 
 const USERS_KEY = 'telegram_users';
 const ORDERS_KEY = 'telegram_orders';
+const ADMINS_KEY = 'telegram_admins';
 
 export const db = {
   // Users
@@ -35,6 +36,51 @@ export const db = {
       users[index] = { ...users[index], ...updates };
       this.saveUsers(users);
     }
+  },
+
+  // Admins
+  getAdmins() {
+    const admins = localStorage.getItem(ADMINS_KEY);
+    if (!admins) {
+      const initialAdmins = [{ username: '@mama_brik', permissions: { canAddProducts: true, canAddAdmins: true, canManageOrders: true } }];
+      localStorage.setItem(ADMINS_KEY, JSON.stringify(initialAdmins));
+      return initialAdmins;
+    }
+    return JSON.parse(admins);
+  },
+
+  saveAdmins(admins) {
+    localStorage.setItem(ADMINS_KEY, JSON.stringify(admins));
+  },
+
+  addAdmin(username, permissions = { canAddProducts: true, canAddAdmins: false, canManageOrders: false }) {
+    const admins = this.getAdmins();
+    const existingAdmin = admins.find(a => a.username === username);
+    if (!existingAdmin) {
+      admins.push({ username, permissions });
+      this.saveAdmins(admins);
+    }
+  },
+
+  updateAdminPermissions(username, permissions) {
+    const admins = this.getAdmins();
+    const index = admins.findIndex(a => a.username === username);
+    if (index !== -1) {
+      admins[index].permissions = { ...admins[index].permissions, ...permissions };
+      this.saveAdmins(admins);
+    }
+  },
+
+  removeAdmin(username) {
+    const admins = this.getAdmins();
+    const filtered = admins.filter(a => a.username !== username);
+    this.saveAdmins(filtered);
+  },
+
+  getAdminPermissions(username) {
+    const admins = this.getAdmins();
+    const admin = admins.find(a => a.username === username);
+    return admin ? admin.permissions : null;
   },
 
   // Orders

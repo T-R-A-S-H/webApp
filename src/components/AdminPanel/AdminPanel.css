@@ -32,6 +32,19 @@ textarea {
     min-height: 60px;
 }
 
+.permissions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.permissions label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .order {
     border-bottom: 1px solid var(--tg-theme-text-color);
     padding: 10px 0;
@@ -39,4 +52,20 @@ textarea {
 
 .order p {
     margin: 5px 0;
+}
+
+.admin-item {
+    border-bottom: 1px solid var(--tg-theme-text-color);
+    padding: 10px 0;
+}
+
+.admin-item p {
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }

@@ -1,24 +1,6 @@
+import { db } from '../db';
+
 const tg = window.Telegram.WebApp;
-
-const ADMINS_KEY = 'telegram_admins';
-
-function getAdmins() {
-    const admins = localStorage.getItem(ADMINS_KEY);
-    if (!admins) {
-        const initialAdmins = ['@mama_brik'];
-        localStorage.setItem(ADMINS_KEY, JSON.stringify(initialAdmins));
-        return initialAdmins;
-    }
-    return JSON.parse(admins);
-}
-
-function addAdmin(username) {
-    const admins = getAdmins();
-    if (!admins.includes(username)) {
-        admins.push(username);
-        localStorage.setItem(ADMINS_KEY, JSON.stringify(admins));
-    }
-}
 
 export function useTelegram() {
 
@@ -37,8 +19,30 @@ export function useTelegram() {
     const isAdmin = () => {
         const user = tg.initDataUnsafe?.user;
         if (!user || !user.username) return false;
-        const admins = getAdmins();
-        return admins.includes('@' + user.username);
+        const permissions = db.getAdminPermissions('@' + user.username);
+        return permissions !== null;
+    }
+
+    const getAdminPermissions = () => {
+        const user = tg.initDataUnsafe?.user;
+        if (!user || !user.username) return null;
+        return db.getAdminPermissions('@' + user.username);
+    }
+
+    const addAdmin = (username, permissions) => {
+        db.addAdmin(username, permissions);
+    }
+
+    const updateAdminPermissions = (username, permissions) => {
+        db.updateAdminPermissions(username, permissions);
+    }
+
+    const removeAdmin = (username) => {
+        db.removeAdmin(username);
+    }
+
+    const getAllAdmins = () => {
+        return db.getAdmins();
     }
 
     return {
@@ -48,6 +52,10 @@ export function useTelegram() {
         user: tg.initDataUnsafe?.user,
         queryId: tg.initDataUnsafe?.query_id,
         isAdmin,
+        getAdminPermissions,
         addAdmin,
+        updateAdminPermissions,
+        removeAdmin,
+        getAllAdmins,
     }
 }
