@@ -19,6 +19,15 @@
     font-size: 0.8em;
 }
 
+.condition, .size {
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
 .add-btn {
     width: 100%;
+}
+
+.add-btn:disabled {
+    background: gray;
 }

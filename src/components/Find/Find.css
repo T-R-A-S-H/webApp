@@ -1,0 +1,12 @@
+.find {
+    padding: 20px;
+}
+
+.find ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.find li {
+    margin: 10px 0;
+}
