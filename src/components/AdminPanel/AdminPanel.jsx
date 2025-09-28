@@ -41,11 +41,17 @@ const AdminPanel = () => {
         alert('Продукт добавлен!');
     };
 
-    const handleAddAdmin = (e) => {
+    const handleAddAdmin = async (e) => {
         e.preventDefault();
-        addAdmin('@' + adminUsername.replace('@', ''));
+        await addAdmin('@' + adminUsername.replace('@', ''));
         setAdminUsername('');
         alert('Админ добавлен!');
+    };
+
+    const handleRemoveAdmin = async (username) => {
+        if (confirm('Удалить админа?')) {
+            await removeAdmin(username);
+        }
     };
 
     const handleEditAdmin = (admin) => {
@@ -61,11 +67,6 @@ const AdminPanel = () => {
         alert('Права обновлены!');
     };
 
-    const handleRemoveAdmin = (username) => {
-        if (confirm('Удалить админа?')) {
-            removeAdmin(username);
-        }
-    };
 
     return (
         <div className="admin-panel">

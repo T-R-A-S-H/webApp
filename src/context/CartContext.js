@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db } from '../db';
+import { api } from '../api';
 
 const CartContext = createContext();
 
@@ -30,16 +30,31 @@ function saveProducts(products) {
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
-  const [products, setProducts] = useState(getProducts());
-  const [orders, setOrders] = useState(db.getOrders());
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    saveProducts(products);
-  }, [products]);
+    loadProducts();
+    loadOrders();
+  }, []);
 
-  useEffect(() => {
-    db.saveOrders(orders);
-  }, [orders]);
+  const loadProducts = async () => {
+    try {
+      const data = await api.getPosts();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error loading products:', error);
+    }
+  };
+
+  const loadOrders = async () => {
+    try {
+      const data = await api.getOrders();
+      setOrders(data);
+    } catch (error) {
+      console.error('Error loading orders:', error);
+    }
+  };
 
   const addToCart = (product) => {
     if (!cart.find(item => item.id === product.id)) {
@@ -51,31 +66,43 @@ export const CartProvider = ({ children }) => {
     setCart(cart.filter(item => item.id !== id));
   };
 
-  const placeOrder = (user) => {
-    // Save user to DB
-    db.addUser(user);
+  const placeOrder = async (user) => {
+    try {
+      // Save user
+      await api.addUser(user);
 
-    const newOrder = {
-      id: Date.now().toString(),
-      userId: user.id,
-      items: cart,
-      total: cart.reduce((acc, item) => acc + item.price, 0),
-      status: 'В обработке',
-      date: new Date().toISOString(),
-    };
-    db.addOrder(newOrder);
-    setOrders(db.getOrders());
-    setCart([]);
+      const newOrder = {
+        userId: user.id,
+        items: cart,
+        total: cart.reduce((acc, item) => acc + item.price, 0),
+        status: 'В обработке',
+        date: new Date().toISOString(),
+      };
+      await api.addOrder(newOrder);
+      await loadOrders();
+      setCart([]);
+    } catch (error) {
+      console.error('Error placing order:', error);
+    }
   };
 
-  const updateOrderStatus = (orderId, status) => {
-    db.updateOrder(orderId, { status });
-    setOrders(db.getOrders());
+  const updateOrderStatus = async (orderId, status) => {
+    try {
+      await api.updateOrder(orderId, { status });
+      await loadOrders();
+    } catch (error) {
+      console.error('Error updating order:', error);
+    }
   };
 
-  const addProduct = (product) => {
-    const newProduct = { ...product, id: Date.now().toString() };
-    setProducts([...products, newProduct]);
+  const addProduct = async (product) => {
+    try {
+      const newProduct = { ...product, id: Date.now().toString() };
+      await api.addPost(newProduct);
+      await loadProducts();
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
   };
 
   return (

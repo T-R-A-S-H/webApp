@@ -1,13 +1,26 @@
-import React from 'react';
-import { useCart } from "../../context/CartContext";
+import React, { useState, useEffect } from 'react';
+import { api } from "../../api";
 import { useTelegram } from "../../hooks/useTelegram";
 import './Tracking.css';
 
 const Tracking = () => {
-    const { orders } = useCart();
+    const [userOrders, setUserOrders] = useState([]);
     const { user } = useTelegram();
 
-    const userOrders = orders.filter(order => order.userId === user?.id);
+    useEffect(() => {
+        if (user?.id) {
+            loadUserOrders();
+        }
+    }, [user]);
+
+    const loadUserOrders = async () => {
+        try {
+            const orders = await api.getOrdersByUserId(user.id);
+            setUserOrders(orders);
+        } catch (error) {
+            console.error('Error loading orders:', error);
+        }
+    };
 
     return (
         <div className="tracking">
