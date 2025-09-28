@@ -14,6 +14,11 @@ const AdminPanel = () => {
         permissions = { canAddProducts: true, canAddAdmins: true, canManageOrders: true };
     }
 
+    // Default permissions if none
+    if (!permissions) {
+        permissions = { canAddProducts: false, canAddAdmins: false, canManageOrders: false };
+    }
+
     const [productForm, setProductForm] = useState({
         title: '',
         description: '',
