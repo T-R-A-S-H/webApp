@@ -91,7 +91,21 @@ export const CartProvider = ({ children }) => {
       };
       await api.addOrder(newOrder);
       await loadOrders();
+
+      // Remove ordered products from list
+      for (const item of cart) {
+        try {
+          await api.deletePost(item.id);
+        } catch (error) {
+          console.error('Error deleting post:', item.id, error);
+        }
+      }
+      await loadProducts();
+
       setCart([]);
+
+      // Send notification to admin (placeholder - implement with Telegram Bot API)
+      alert(`Заказ оформлен! Админ уведомлен.`);
     } catch (error) {
       console.error('Error placing order:', error);
     }
