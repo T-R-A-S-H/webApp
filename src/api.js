@@ -3,7 +3,7 @@ const API_BASE = 'http://91.229.90.203/api';
 export const api = {
   // Posts
   async getPosts() {
-    const response = await fetch(`${API_BASE}/posts`, { mode: 'cors' });
+    const response = await fetch(`${API_BASE}/posts`);
     return response.json();
   },
 
@@ -31,7 +31,7 @@ export const api = {
 
   // Users
   async getUsers() {
-    const response = await fetch(`${API_BASE}/users`, { mode: 'cors' });
+    const response = await fetch(`${API_BASE}/users`);
     return response.json();
   },
 
@@ -45,7 +45,7 @@ export const api = {
   },
 
   async getUserById(id) {
-    const response = await fetch(`${API_BASE}/users/${id}`, { mode: 'cors' });
+    const response = await fetch(`${API_BASE}/users/${id}`);
     if (response.ok) {
       return response.json();
     }
@@ -54,7 +54,7 @@ export const api = {
 
   // Orders
   async getOrders() {
-    const response = await fetch(`${API_BASE}/orders`, { mode: 'cors' });
+    const response = await fetch(`${API_BASE}/orders`);
     return response.json();
   },
 
@@ -77,7 +77,7 @@ export const api = {
   },
 
   async getOrdersByUserId(userId) {
-    const response = await fetch(`${API_BASE}/orders/user/${userId}`, { mode: 'cors' });
+    const response = await fetch(`${API_BASE}/orders/user/${userId}`);
     return response.json();
   },
 
