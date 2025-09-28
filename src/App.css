@@ -24,7 +24,8 @@ body {
   width: 100%;
   background: var(--tg-theme-bg-color);
   border-top: 1px solid var(--tg-theme-text-color);
-  padding: 10px 0;
+  padding: 15px 0;
+  height: 80px; /* Увеличенная высота */
 }
 
 .nav-link {
