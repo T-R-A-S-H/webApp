@@ -6,6 +6,7 @@ import './ProductItem.css';
 const ProductItem = ({product, className}) => {
     const {cart, addToCart} = useCart();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
     const isInCart = cart.some(item => item.id === product.id);
 
     const onAddHandler = () => {
@@ -16,10 +17,19 @@ const ProductItem = ({product, className}) => {
 
     const openModal = () => {
         setIsModalOpen(true);
+        setCurrentPhotoIndex(0);
     }
 
     const closeModal = () => {
         setIsModalOpen(false);
+    }
+
+    const nextPhoto = () => {
+        setCurrentPhotoIndex((prev) => (prev + 1) % product.photos.length);
+    }
+
+    const prevPhoto = () => {
+        setCurrentPhotoIndex((prev) => (prev - 1 + product.photos.length) % product.photos.length);
     }
 
     return (
@@ -46,9 +56,18 @@ const ProductItem = ({product, className}) => {
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="close-btn" onClick={closeModal}>×</button>
                         <h2>{product.title}</h2>
-                        <div className="modal-photos">
-                            {product.photos && product.photos.map((photo, index) => (
-                                <img key={index} src={photo} alt={`${product.title} ${index + 1}`} className="modal-photo" />
+                        <div className="modal-photo-container">
+                            {product.photos && product.photos.length > 1 && (
+                                <button className="nav-btn prev-btn" onClick={prevPhoto}>‹</button>
+                            )}
+                            <img src={product.photos[currentPhotoIndex]} alt={`${product.title} ${currentPhotoIndex + 1}`} className="modal-photo" />
+                            {product.photos && product.photos.length > 1 && (
+                                <button className="nav-btn next-btn" onClick={nextPhoto}>›</button>
+                            )}
+                        </div>
+                        <div className="photo-indicators">
+                            {product.photos.map((_, index) => (
+                                <span key={index} className={`indicator ${index === currentPhotoIndex ? 'active' : ''}`}></span>
                             ))}
                         </div>
                         <p>{product.description}</p>
