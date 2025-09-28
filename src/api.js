@@ -1,10 +1,9 @@
-const API_BASE = 'http://91.229.90.203/api';
+const API_BASE = 'http://91.229.90.203:3001/api';
 
 export const api = {
   // Posts
   async getPosts() {
     const response = await fetch(`${API_BASE}/posts`);
-    console.log(responese);
     return response.json();
   },
 
