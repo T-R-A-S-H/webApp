@@ -1,0 +1,42 @@
+.admin-panel {
+    padding: 20px;
+}
+
+.section {
+    margin-bottom: 30px;
+    border: 1px solid var(--tg-theme-text-color);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.section h3 {
+    margin-top: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input, textarea, select {
+    padding: 8px;
+    border: 1px solid var(--tg-theme-text-color);
+    border-radius: 3px;
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.order {
+    border-bottom: 1px solid var(--tg-theme-text-color);
+    padding: 10px 0;
+}
+
+.order p {
+    margin: 5px 0;
+}

@@ -1,17 +1,18 @@
 import React from 'react';
 import {useCart} from "../../context/CartContext";
+import {useTelegram} from "../../hooks/useTelegram";
 import Button from "../Button/Button";
 import './Cart.css';
 
 const Cart = () => {
-    const {cart, removeFromCart} = useCart();
+    const {cart, removeFromCart, placeOrder} = useCart();
+    const {user, addAdmin} = useTelegram();
 
     const totalPrice = cart.reduce((acc, item) => acc + item.price, 0);
 
     const onOrder = () => {
-        const admins = ['@admin1', '@admin2'];
-        const message = `Заказ:\n${cart.map(item => `${item.title} - ${item.price} руб.`).join('\n')}\nИтого: ${totalPrice} руб.\nСвяжитесь с админами: ${admins.join(', ')}`;
-        alert(message);
+        placeOrder(user);
+        alert('Заказ оформлен!');
     };
 
     return (
