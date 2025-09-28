@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { api } from '../api';
+import { db } from '../db';
 
 const CartContext = createContext();
 
@@ -30,42 +30,16 @@ function saveProducts(products) {
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState(db.getProducts());
+  const [orders, setOrders] = useState(db.getOrders());
 
   useEffect(() => {
-    loadProducts();
-    loadOrders();
-  }, []);
+    db.saveProducts(products);
+  }, [products]);
 
-  const loadProducts = async () => {
-    try {
-      const data = await api.getPosts();
-      setProducts(data);
-    } catch (error) {
-      console.error('Error loading products:', error);
-      // Fallback to local products
-      setProducts([
-        {id: '1', title: 'Джинсы', price: 5000, description: 'Синего цвета, прямые', photos: ['https://via.placeholder.com/150'], condition: 8.5, size: 'M'},
-        {id: '2', title: 'Куртка', price: 12000, description: 'Зеленого цвета, теплая', photos: ['https://via.placeholder.com/150'], condition: 9.0, size: 'L'},
-        {id: '3', title: 'Джинсы 2', price: 5000, description: 'Синего цвета, прямые', photos: ['https://via.placeholder.com/150'], condition: 7.2, size: 'S'},
-        {id: '4', title: 'Куртка 8', price: 122, description: 'Зеленого цвета, теплая', photos: ['https://via.placeholder.com/150'], condition: 6.8, size: 'XL'},
-        {id: '5', title: 'Джинсы 3', price: 5000, description: 'Синего цвета, прямые', photos: ['https://via.placeholder.com/150'], condition: 8.9, size: 'M'},
-        {id: '6', title: 'Куртка 7', price: 600, description: 'Зеленого цвета, теплая', photos: ['https://via.placeholder.com/150'], condition: 5.5, size: 'M'},
-        {id: '7', title: 'Джинсы 4', price: 5500, description: 'Синего цвета, прямые', photos: ['https://via.placeholder.com/150'], condition: 9.2, size: 'L'},
-        {id: '8', title: 'Куртка 5', price: 12000, description: 'Зеленого цвета, теплая', photos: ['https://via.placeholder.com/150'], condition: 7.7, size: 'S'},
-      ]);
-    }
-  };
-
-  const loadOrders = async () => {
-    try {
-      const data = await api.getOrders();
-      setOrders(data);
-    } catch (error) {
-      console.error('Error loading orders:', error);
-    }
-  };
+  useEffect(() => {
+    db.saveOrders(orders);
+  }, [orders]);
 
   const addToCart = (product) => {
     if (!cart.find(item => item.id === product.id)) {
@@ -77,70 +51,38 @@ export const CartProvider = ({ children }) => {
     setCart(cart.filter(item => item.id !== id));
   };
 
-  const placeOrder = async (user) => {
-    const orderItems = [...cart];
-    const total = cart.reduce((acc, item) => acc + item.price, 0);
+  const placeOrder = (user) => {
+    // Save user to DB
+    db.addUser(user);
 
-    try {
-      // Save user
-      await api.addUser(user);
+    const newOrder = {
+      id: Date.now().toString(),
+      userId: user.id,
+      items: cart,
+      total: cart.reduce((acc, item) => acc + item.price, 0),
+      status: 'В обработке',
+      date: new Date().toISOString(),
+    };
+    db.addOrder(newOrder);
+    setOrders(db.getOrders());
 
-      const newOrder = {
-        userId: user.id,
-        items: orderItems,
-        total,
-        status: 'В обработке',
-        date: new Date().toISOString(),
-      };
-      await api.addOrder(newOrder);
-      await loadOrders();
-
-      // Remove ordered products from list
-      for (const item of orderItems) {
-        try {
-          await api.deletePost(item.id);
-          setProducts(products.filter(p => p.id !== item.id));
-        } catch (error) {
-          console.error('Error deleting post:', item.id, error);
-          // Remove locally
-          setProducts(products.filter(p => p.id !== item.id));
-        }
-      }
-      await loadProducts();
-
-    } catch (error) {
-      console.error('Error placing order:', error);
-      // Still remove products locally
-      for (const item of orderItems) {
-        setProducts(products.filter(p => p.id !== item.id));
-      }
-    }
+    // Remove ordered products
+    const updatedProducts = products.filter(p => !cart.find(item => item.id === p.id));
+    setProducts(updatedProducts);
 
     setCart([]);
 
-    // Send notification to admin (placeholder - implement with Telegram Bot API)
     alert(`Заказ оформлен! Админ уведомлен.`);
   };
 
-  const updateOrderStatus = async (orderId, status) => {
-    try {
-      await api.updateOrder(orderId, { status });
-      await loadOrders();
-    } catch (error) {
-      console.error('Error updating order:', error);
-    }
+  const updateOrderStatus = (orderId, status) => {
+    db.updateOrder(orderId, { status });
+    setOrders(db.getOrders());
   };
 
-  const addProduct = async (product) => {
+  const addProduct = (product) => {
     const newProduct = { ...product, id: Date.now().toString() };
-    try {
-      await api.addPost(newProduct);
-      await loadProducts();
-    } catch (error) {
-      console.error('Error adding product:', error);
-      // Add locally
-      setProducts([...products, newProduct]);
-    }
+    setProducts([...products, newProduct]);
   };
 
   return (

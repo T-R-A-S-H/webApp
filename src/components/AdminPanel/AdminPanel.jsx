@@ -41,16 +41,16 @@ const AdminPanel = () => {
         alert('Продукт добавлен!');
     };
 
-    const handleAddAdmin = async (e) => {
+    const handleAddAdmin = (e) => {
         e.preventDefault();
-        await addAdmin('@' + adminUsername.replace('@', ''));
+        addAdmin('@' + adminUsername.replace('@', ''));
         setAdminUsername('');
         alert('Админ добавлен!');
     };
 
-    const handleRemoveAdmin = async (username) => {
+    const handleRemoveAdmin = (username) => {
         if (confirm('Удалить админа?')) {
-            await removeAdmin(username);
+            removeAdmin(username);
         }
     };
 
