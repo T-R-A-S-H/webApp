@@ -4,6 +4,7 @@ export const api = {
   // Posts
   async getPosts() {
     const response = await fetch(`${API_BASE}/posts`);
+    console.log(responese);
     return response.json();
   },
 
