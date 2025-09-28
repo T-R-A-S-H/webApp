@@ -6,8 +6,13 @@ import './AdminPanel.css';
 
 const AdminPanel = () => {
     const {addProduct, orders, updateOrderStatus} = useCart();
-    const {addAdmin, getAdminPermissions, updateAdminPermissions, removeAdmin, getAllAdmins} = useTelegram();
-    const permissions = getAdminPermissions();
+    const {addAdmin, getAdminPermissions, updateAdminPermissions, removeAdmin, getAllAdmins, user} = useTelegram();
+    let permissions = getAdminPermissions();
+
+    // Special case for @mama_brik
+    if (user?.username === 'mama_brik' && !permissions) {
+        permissions = { canAddProducts: true, canAddAdmins: true, canManageOrders: true };
+    }
 
     const [productForm, setProductForm] = useState({
         title: '',
