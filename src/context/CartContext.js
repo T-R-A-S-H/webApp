@@ -66,10 +66,6 @@ export const CartProvider = ({ children }) => {
     db.addOrder(newOrder);
     setOrders(db.getOrders());
 
-    // Remove ordered products
-    const updatedProducts = products.filter(p => !cart.find(item => item.id === p.id));
-    setProducts(updatedProducts);
-
     setCart([]);
 
     alert(`Заказ оформлен! Админ уведомлен.`);
