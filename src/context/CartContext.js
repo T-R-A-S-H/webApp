@@ -29,7 +29,18 @@ export const CartProvider = ({ children }) => {
       setProducts(data);
     } catch (error) {
       console.error('Error loading products:', error);
-      setProducts([]);
+      // Fallback to hardcoded products
+      const fallbackProducts = [
+        {id: '1', title: 'Джинсы', price: 5000, description: 'Синего цвета, прямые', photos: ['https://via.placeholder.com/300x300/0000FF/FFFFFF?text=Jeans+1'], condition: 8.5, size: 'M'},
+        {id: '2', title: 'Куртка', price: 12000, description: 'Зеленого цвета, теплая', photos: ['https://via.placeholder.com/300x300/00FF00/000000?text=Jacket+1'], condition: 9.0, size: 'L'},
+        {id: '3', title: 'Джинсы 2', price: 5000, description: 'Синего цвета, прямые', photos: ['https://via.placeholder.com/300x300/0000FF/FFFFFF?text=Jeans2+1'], condition: 7.2, size: 'S'},
+        {id: '4', title: 'Куртка 8', price: 122, description: 'Зеленого цвета, теплая', photos: ['https://via.placeholder.com/300x300/00FF00/000000?text=Jacket8'], condition: 6.8, size: 'XL'},
+        {id: '5', title: 'Джинсы 3', price: 5000, description: 'Синего цвета, прямые', photos: ['https://via.placeholder.com/300x300/0000FF/FFFFFF?text=Jeans3+1'], condition: 8.9, size: 'M'},
+        {id: '6', title: 'Куртка 7', price: 600, description: 'Зеленого цвета, теплая', photos: ['https://via.placeholder.com/300x300/00FF00/000000?text=Jacket7+1'], condition: 5.5, size: 'M'},
+        {id: '7', title: 'Джинсы 4', price: 5500, description: 'Синего цвета, прямые', photos: ['https://via.placeholder.com/300x300/0000FF/FFFFFF?text=Jeans4'], condition: 9.2, size: 'L'},
+        {id: '8', title: 'Куртка 5', price: 12000, description: 'Зеленого цвета, теплая', photos: ['https://via.placeholder.com/300x300/00FF00/000000?text=Jacket5+1'], condition: 7.7, size: 'S'},
+      ];
+      setProducts(fallbackProducts);
     }
   };
 
