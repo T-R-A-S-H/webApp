@@ -19,6 +19,8 @@ const AdminPanel = () => {
         permissions = { canAddProducts: false, canAddAdmins: false, canManageOrders: false };
     }
 
+    alert(`Admin panel loaded for ${user?.username || 'unknown'} with permissions: ${JSON.stringify(permissions)}`);
+
     const [productForm, setProductForm] = useState({
         title: '',
         description: '',
