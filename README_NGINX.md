@@ -8,16 +8,10 @@ sudo apt update
 sudo apt install nginx
 ```
 
-### 2. Установка Certbot для Let's Encrypt
+### 2. Создание self-signed SSL сертификата
 ```bash
-sudo apt install certbot python3-certbot-nginx
+sudo openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/private/selfsigned.key -out /etc/ssl/certs/selfsigned.crt -days 365 -nodes -subj "/C=RU/ST=Moscow/L=Moscow/O=WebApp/CN=91.229.90.203"
 ```
-
-### 3. Получение SSL сертификата
-```bash
-sudo certbot --nginx -d 91.229.90.203
-```
-Следуйте инструкциям. Выберите redirect HTTP to HTTPS.
 
 ### 4. Настройка Nginx конфига
 Скопируйте `nginx.conf` в `/etc/nginx/sites-available/default` или создайте новый файл.
