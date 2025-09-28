@@ -1,4 +1,4 @@
-const API_BASE = 'https://91.229.90.203/api';
+const API_BASE = 'http://91.229.90.203/api';
 
 export const api = {
   // Posts
